@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/bootstrap.css') }}" />
+		<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
+		<title>{{title}}</title>
+	</head>
+	<body id="">
+		<!-- display nav component -->
+		{{nav | safe}}
+
+		<div class="errors">
+			{% with messages = get_flashed_messages() %}<!-- declare a variable called messages -->
+			{% if messages %}<!-- check if there are any messages -->
+			{% for message in messages %}<!-- loop through the messages -->
+			<p>{{message}}</p>
+			<!-- display each message in a paragraph tag -->
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
+
+		<div class="container-fluid col-8 mx-auto">
+			<h1>Welcome {{session['first_name']}}! </h1>
+			<br />
+			<form class="row g-3 justify-content-between" action="/event_search_form" method="post">
+				<!-- search -->
+				<div class="col">
+				<input type="search" class="form-control" name="search" id="search" placeholder="Search" value = "{{search_term}}">
+				</div>
+				<!-- filter -->
+				<div class="col-auto d-flex align-items-center">
+				<label for="filter" class="form-label d-inline-block me-2">Filter:</label>
+				<select class="form-select d-inline-block" name="filter" id="filter">
+					<option value="name">Event Name</option>
+					<option value="location">Location</option>
+					<option value="time">Date</option>
+					<option value="user_id">Creator</option>
+				</select>
+				</div>
+				<!-- submit -->
+				<button type="submit" class="btn btn-primary col-auto">Submit</button>
+			</form>
+			<table class="table table-hover p-7">
+				<thead>
+					<tr>
+						<th>Event Name</th>
+						<th>Location</th>
+						<th>Day & Time</th>
+						<th class="text-center">Attendees</th>
+						<th>Creator</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if events_all is not none %} 
+						{% if events_all | length > 0 %} 
+							{% for event in events_all %}
+							<tr>
+								<td><a href="/event_details/{{event.id}}">{{event.name}}</a></td>
+								<td>{{event.location}}</td>
+								<td>{{event.time.strftime('%m/%d/%Y %I:%M:%p')}}</td>
+								<td class="text-center">{{event.attendee_count}}/{{event.attendee_limit}}</td>
+								<td><a href="/user_details/{{event.user_id}}">{{event.user.first_name}} {{event.user.last_name}}</td></a>
+							</tr>
+							{% endfor %} 
+						{% else %}
+						<tr>
+							<td>None</td>
+							<td>None</td>
+							<td>None</td>
+							<td>None</td>
+						</tr>
+						{% endif %}
+					{% endif %}
+				</tbody>
+			</table>
+		<script src="{{ url_for('static', filename='bootstrap/bootstrap.bundle.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+	</body>
+</html>

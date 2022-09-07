@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="{{ url_for('static',filename='bootstrap/bootstrap.css') }}" />
+		<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}" />
+		<title>{{title}}</title>
+	</head>
+	<body id="">
+		<!-- display nav component -->
+		{{nav | safe}}
+
+		<div class="errors">
+			{% with messages = get_flashed_messages() %}<!-- declare a variable called messages -->
+			{% if messages %}<!-- check if there are any messages -->
+			{% for message in messages %}<!-- loop through the messages -->
+			<p>{{message}}</p>
+			<!-- display each message in a paragraph tag -->
+			{% endfor %} {% endif %} {% endwith %}
+		</div>
+
+		<div class="container-fluid col-8 mx-auto">
+			<h1>Welcome {{session['first_name']}}!</h1>
+			<table class="table table-hover">
+				<thead>
+					<div class="d-flex justify-content-between">
+						<p class="d-inline-block">
+							Today is {{todays_date.strftime('%m/%d/%Y')}} and you have {{events_today | length}} event today:
+						</p>
+						<a href="/new_event" class="btn btn-primary"> Add New Event </a>
+					</div>
+					<tr>
+						<th>Event Name</th>
+						<th>Location</th>
+						<th>Day & Time</th>
+						<th class="text-center">Attendees</th>
+						<th>Creator</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if events_today | length > 0 %} {% for event in events_today %}
+					<tr>
+						<td><a href="/event_details/{{event.id}}">{{event.name}}</a></td>
+						<td>{{event.location}}</td>
+						<td>{{event.time.strftime('%m/%d/%Y %I:%M:%p')}}</td>
+						<td class="text-center">{{event.attendee_count}}/{{event.attendee_limit}}</td>
+						<td><a href="/user_details/{{event.user_id}}">{{event.user.first_name}} {{event.user.last_name}}</td></a>
+					{% endfor %} {% else %}
+					<tr>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+			<br />
+			<table class="table table-hover p-7">
+				<thead>
+					<p>All Upcoming Events:</p>
+					<tr>
+						<th>Event Name</th>
+						<th>Location</th>
+						<th>Day & Time</th>
+						<th class="text-center">Attendees</th>
+						<th>Creator</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if events_future | length > 0 %} {% for event in events_future %}
+					<tr>
+						<td><a href="/event_details/{{event.id}}">{{event.name}}</a></td>
+						<td>{{event.location}}</td>
+						<td>{{event.time.strftime('%m/%d/%Y %I:%M:%p')}}</td>
+						<td class="text-center">{{event.attendee_count}}/{{event.attendee_limit}}</td>
+						<td><a href="/user_details/{{event.user_id}}">{{event.user.first_name}} {{event.user.last_name}}</td></a>
+					</tr>
+					{% endfor %} {% else %}
+					<tr>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+			<br />
+			<table class="table table-hover p-7">
+				<thead>
+					<p class="mt-5">All Past Events:</p>
+					<tr>
+						<th>Event Name</th>
+						<th>Location</th>
+						<th>Day & Time</th>
+						<th class="text-center">Attendees</th>
+						<th>Creator</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% if events_past | length > 0 %} {% for event in events_past %}
+					<tr>
+						<td><a href="/event_details/{{event.id}}">{{event.name}}</a></td>
+						<td>{{event.location}}</td>
+						<td>{{event.time.strftime('%m/%d/%Y %I:%M:%p')}}</td>
+						<td class="text-center">{{event.attendee_count}}/{{event.attendee_limit}}</td>
+						<td><a href="/user_details/{{event.user_id}}">{{event.user.first_name}} {{event.user.last_name}}</td></a>
+					</tr>
+					{% endfor %} {% else %}
+					<tr>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+						<td>None</td>
+					</tr>
+					{% endif %}
+				</tbody>
+			</table>
+		</div>
+
+		<script src="{{ url_for('static', filename='bootstrap/bootstrap.bundle.js') }}"></script>
+		<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+	</body>
+</html>
